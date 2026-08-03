@@ -1,0 +1,37 @@
+{
+  "_comment": "复制为 config.json 后修改。所有字段均为中性占位值，请在安装时通过个性化问答覆盖。",
+
+  "brand": "AI 工作台",
+  "tagline": "Local AI Workstation",
+
+  "city": "北京",
+
+  "_scan_comment": "本机 AI 工具扫描根目录，内含 mcp.json / skills/ / agents/。agent_db 是 Agent 宿主的 SQLite 库，用于读取真实在跑的 AI 任务；找不到时「任务在跑」面板会自动降级为空态，不影响其他模块。",
+  "scan_root": "~/.workbuddy",
+  "agent_db": "~/.workbuddy/workbuddy.db",
+
+  "stocks": {
+    "_comment": "markets=多市场分组（A股/美股/…），每组一列指数代码。代码格式：沪市 shXXXXXX / 深市 szXXXXXX / 美股 gb_XXXX。watchlist_seed=初始自选股。删除某市场键或留空数组即可关闭对应市场。",
+    "markets": {
+      "A股": ["sh000001", "sz399001", "sz399006"],
+      "美股": ["gb_dji", "gb_ixic", "gb_inx"]
+    },
+    "watchlist_seed": []
+  },
+
+  "ai_tools": {
+    "_comment": "四个分类各自的工具清单，name+url。这里给的是通用公开工具示例，请替换为你自己常用的。仅为个性化占位，参考实现实际从本机真实扫描读取。",
+    "mcp": [
+      { "name": "MCP 官方服务器合集", "url": "https://github.com/modelcontextprotocol/servers" }
+    ],
+    "skills": [
+      { "name": "Skill 示例", "url": "https://example.com/" }
+    ],
+    "agents": [
+      { "name": "Agent 示例", "url": "https://example.com/" }
+    ],
+    "other": [
+      { "name": "其他工具示例", "url": "https://example.com/" }
+    ]
+  }
+}
