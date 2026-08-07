@@ -16,11 +16,15 @@ hskills/
 ├── .gitignore
 │
 ├── skills/
-│   ├── 个人AI工作台搭建流程/                # 📦 Skill 源（规范目录）
+│   ├── 个人AI工作台搭建流程/                # 📦 原创 Skill 源（规范目录）
 │   │   ├── SKILL.md                       # 主文件
 │   │   ├── references/                    # 长文档（prompt.md / sources.md）
 │   │   └── assets/                        # 模板 / 脚本 / 静态资源
-│   └── 个人AI工作台搭建流程.zip            # 📦 打包产物（git 忽略，用 tools/pack.sh 生成）
+│   ├── openclaw-video-toolkit/            # 📦 第三方（MIT，Digital Samba）视频剪辑工具箱
+│   ├── claude-shorts/                     # 📦 第三方（MIT，Daniel Agrici）长转短一键切片
+│   ├── 个人AI工作台搭建流程.zip            # 📦 打包产物（用 tools/pack.sh 生成）
+│   ├── openclaw-video-toolkit.zip
+│   └── claude-shorts.zip
 │
 ├── docs/
 │   └── 个人AI工作台搭建流程-通用提示词.md   # 独立提示词文档（可直接复制给 AI 使用）
@@ -59,6 +63,21 @@ unzip skills/个人AI工作台搭建流程.zip -d ~/.workbuddy/skills/
 - **`skills/个人AI工作台搭建流程/`** — Skill 完整源（SKILL.md + references + assets）。
 - **`docs/个人AI工作台搭建流程-通用提示词.md`** — 独立版提示词，可单独发给 AI 当一次性 prompt 使用，无需安装 skill。
 - **`assets/`** 内含零依赖参考实现（`server.py` + `index.html`），是方法论的示范代码。
+
+---
+
+## 已打包的 Skill 清单（含第三方）
+
+本仓库除原创 Skill 外，还打包了「时序 · AI 提效与搞钱」系列视频中提到的**视频剪辑类 Skill**（详见 `ATTRIBUTION.md` 的许可与署名）：
+
+| Skill 文件夹 | 来源 / 上游 | 许可 | 对应视频能力（Day4 资料包） |
+|-------------|------------|------|--------------------------|
+| `个人AI工作台搭建流程` | 本仓库原创 | Apache 2.0 | —（个人 AI 工作台搭建） |
+| `openclaw-video-toolkit` | [khushil/claude-code-video-toolkit](https://github.com/khushil/claude-code-video-toolkit) | MIT（Digital Samba） | 1 智能粗剪 · 2 口播精修 · 3 批量处理 · 4 自动字幕 · 5 转码助手 · 6 品牌包装 · 7 动态片头 |
+| `claude-shorts` | [AgriciDaniel/claude-shorts](https://github.com/AgriciDaniel/claude-shorts) | MIT（Daniel Agrici） | 8 一键切片 ⭐ |
+
+> 每个 Skill 目录都提供完整源码；`tools/pack.sh <目录名>` 可重新生成对应的 `.zip` 一键安装包（已在 `skills/` 下生成）。
+> 第三方 Skill 的版权与许可归原作者所有，使用前请阅读对应上游仓库的 `README` 与 `LICENSE`。
 
 ---
 
