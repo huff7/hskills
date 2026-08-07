@@ -1,5 +1,5 @@
 ---
-name: 个人AI工作台搭建流程
+name: hskill-personal-ai-workbench-builder
 description: "个人AI工作台搭建流程（Personal AI Workbench Builder）：Requirement-driven methodology for building a personal local dashboard/workbench/cockpit. Starts from the user's pain points, derives the module breakdown from those pains (never a fixed module list), lets the user choose the tech stack from presented options, then derives endpoints and tables from the confirmed modules. Ships a reference implementation (zero-dependency Python stdlib server + vanilla-JS SPA, SQLite, ECharts, LAN/phone access, dark theme, local tool scanning, and a unified running-AI-tasks panel) as ONE worked example to adapt, not as the required product. Use when a user wants a self-hosted personal dashboard, wants scattered daily info on one local page, wants to see their own local AI tooling, or wants to know what their AI agent is running. NOT for hosted SaaS or multi-user apps. Branding and paths are config-driven — the skill ships NO author-specific labels."
 agent_created: true
 ---
