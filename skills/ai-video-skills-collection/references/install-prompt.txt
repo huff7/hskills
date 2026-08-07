@@ -1,0 +1,16 @@
+请帮我安装以下 8 个视频处理 Skill。逐个尝试安装，每个装完后告诉我结果（成功 / 失败 / 需要手动操作）：
+
+1. npx skills add browser-use/video-use
+2. npx skills add Vibetool/talking-head-video
+3. npx skills add amywork777/video-editing-pipeline
+4. npx skills add kwindla/skill-caption-clip
+5. 请从 github.com/huff7/hskills 仓库的 skills/ffmpeg-usage/ 目录安装 ffmpeg-usage（git clone 仓库后复制该目录到你的 skills/ 目录）
+6. npx skills add op7418/Video-Wrapper-Skills
+7. npx skills add heygen-com/hyperframes --full-depth
+   npx skills add remotion-dev/skills
+8. npx skills add AgriciDaniel/claude-shorts
+
+注意：
+- 如果 npx skills add 某个装不上，就 git clone 对应仓库，把里面的 skill 文件夹复制到你的 skills/ 目录。
+- 第 5 个 ffmpeg-usage 是我自己写的，只能从 huff7/hskills 仓库获取。
+- 全部装完后，列出每个 Skill 的状态。
