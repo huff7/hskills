@@ -7,7 +7,7 @@
 
 ## 1. openclaw-video-toolkit
 
-- **来源仓库**：[khushil/claude-code-video-toolkit](https://github.com/khushil/claude-code-video-toolkit)
+- **来源仓库**：[digitalsamba/claude-code-video-toolkit](https://github.com/digitalsamba/claude-code-video-toolkit)（原 owner 为 `khushil`，仓库已迁移/更名，旧地址仍可 clone）
 - **上游 Skill 路径**：`skills/openclaw-video-toolkit/`
 - **许可**：MIT License — Copyright (c) 2024 Digital Samba
 - **对应视频能力**：智能粗剪、口播精修、批量处理、自动字幕、转码助手、品牌包装、动态片头（即 Day4 资料包中的 1–7 号）
@@ -22,6 +22,17 @@
 - **对应视频能力**：一键切片（即 Day4 资料包中的 8 号 ⭐）
 - **使用前提**：需要 `node` / `python3` / `ffmpeg`，以及 Remotion 渲染环境（已随 Skill 内置 `remotion/`）。首次使用按 `install.sh` / `setup.sh` 安装依赖。
 - **原许可文件**：本仓库 `skills/claude-shorts/LICENSE`（已随包带入，MIT）。
+
+---
+
+## 3. ffmpeg-usage
+
+- **来源**：本仓库原创（huff7）
+- **上游 Skill 路径**：`skills/ffmpeg-usage/`
+- **许可**：Apache License 2.0（与仓库根 `LICENSE` 一致）
+- **内容说明**：ffmpeg / ffprobe 音视频处理命令配方库（安装、信息查询、截图抽帧、GIF、音视频分离/提取/替换、转码封装、缩放裁剪旋转、拼接、加字幕/水印/边框、变速混音、录制，及实战组合配方）。基础命令整理自 ffmpeg 官方文档（ffmpeg.org）与公开教程，实战配方为本仓库二次编排。
+- **对应视频能力**：转码助手（Day4 资料包 5 号）的底层命令层，亦可作为 1–8 号能力的通用命令支撑。
+- **使用前提**：需本地已安装 `ffmpeg` 与 `ffprobe`（见 `references/ffmpeg-cheatsheet.md` §0 安装指引）。技能本身不含二进制，仅提供命令配方。
 
 ---
 

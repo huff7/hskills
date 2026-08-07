@@ -22,9 +22,11 @@ hskills/
 │   │   └── assets/                        # 模板 / 脚本 / 静态资源
 │   ├── openclaw-video-toolkit/            # 📦 第三方（MIT，Digital Samba）视频剪辑工具箱
 │   ├── claude-shorts/                     # 📦 第三方（MIT，Daniel Agrici）长转短一键切片
+│   ├── ffmpeg-usage/                      # 📦 原创（Apache 2.0，huff7）ffmpeg 命令速查与实战配方
 │   ├── 个人AI工作台搭建流程.zip            # 📦 打包产物（用 tools/pack.sh 生成）
 │   ├── openclaw-video-toolkit.zip
-│   └── claude-shorts.zip
+│   ├── claude-shorts.zip
+│   └── ffmpeg-usage.zip
 │
 ├── docs/
 │   └── 个人AI工作台搭建流程-通用提示词.md   # 独立提示词文档（可直接复制给 AI 使用）
@@ -73,8 +75,9 @@ unzip skills/个人AI工作台搭建流程.zip -d ~/.workbuddy/skills/
 | Skill 文件夹 | 来源 / 上游 | 许可 | 对应视频能力（Day4 资料包） |
 |-------------|------------|------|--------------------------|
 | `个人AI工作台搭建流程` | 本仓库原创 | Apache 2.0 | —（个人 AI 工作台搭建） |
-| `openclaw-video-toolkit` | [khushil/claude-code-video-toolkit](https://github.com/khushil/claude-code-video-toolkit) | MIT（Digital Samba） | 1 智能粗剪 · 2 口播精修 · 3 批量处理 · 4 自动字幕 · 5 转码助手 · 6 品牌包装 · 7 动态片头 |
+| `openclaw-video-toolkit` | [digitalsamba/claude-code-video-toolkit](https://github.com/digitalsamba/claude-code-video-toolkit)（原 `khushil` 旧 owner，仍可 clone） | MIT（Digital Samba） | 1 智能粗剪 · 2 口播精修 · 3 批量处理 · 4 自动字幕 · 5 转码助手 · 6 品牌包装 · 7 动态片头（含 ffmpeg skill） |
 | `claude-shorts` | [AgriciDaniel/claude-shorts](https://github.com/AgriciDaniel/claude-shorts) | MIT（Daniel Agrici） | 8 一键切片 ⭐ |
+| `ffmpeg-usage` | 本仓库原创 | Apache 2.0（huff7） | 转码助手（5 号）底层命令层 · 截图/抽帧/封装/格式转换等通用音视频处理 |
 
 > 每个 Skill 目录都提供完整源码；`tools/pack.sh <目录名>` 可重新生成对应的 `.zip` 一键安装包（已在 `skills/` 下生成）。
 > 第三方 Skill 的版权与许可归原作者所有，使用前请阅读对应上游仓库的 `README` 与 `LICENSE`。
