@@ -2,7 +2,10 @@
   "_comment": "复制为 config.json 后修改。所有字段均为中性占位值，请在安装时通过个性化问答覆盖。",
 
   "brand": "AI 工作台",
+  "short_name": "工作台",
   "tagline": "Local AI Workstation",
+  "theme_color": "#0D1117",
+  "background_color": "#0D1117",
 
   "city": "北京",
 

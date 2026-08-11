@@ -76,32 +76,48 @@ Replace `PORT` with the user's configured port. If `require("puppeteer")` fails 
   stretch; give scrollable lists a `max-height` + `overflow-y:auto` instead of
   growing the page.
 
-## LAN & phone access
+## Public deployment + PWA (stable URL, phone access without tethering)
 
-The reliable path to put the dashboard on a phone is **same-Wi-Fi LAN access**. The
-scaffold binds `0.0.0.0` and prints `http://<LAN-IP>:PORT` via `_lan_ip()`. On the
-phone, open that URL — the sidebar auto-collapses into a hamburger drawer (CSS in
-assets/index.html, `max-width:880px` + `.sidebar.open` + `.scrim`).
+The dashboard is reached from the phone over a **stable public URL**, not same-Wi-Fi LAN.
+Package the whole workbench in Docker (Step 6) and deploy to a hosted endpoint whose URL
+stays valid across sandbox sleep / container recreation.
 
-- **OS firewall** is the #1 LAN gotcha. The python binary running `server.py` needs an
-  "Allow incoming connections" rule. If the user gets a silent timeout, have them allow
-  that python binary in the OS firewall settings. A localhost `127.0.0.1` fetch still
-  works regardless; only LAN/phone clients are filtered.
-- A momentary timeout right after a server restart is *not* the firewall — the warm-up
-  thread may still be fetching. Re-test after ~2s before assuming it's blocked.
+### Why not LAN / weak tunnels
+- **LAN** ties the phone to the same Wi-Fi and breaks the moment you leave home; the OS
+  firewall also silently blocks the first LAN hit (must "Allow incoming connections").
+- **Weak tunnels** (cloudflared *quick* tunnel / localtunnel / pinggy) keep the backend local
+  but the URL often rotates or the relay resets, and they do **not** outlive sandbox sleep.
+  Avoid them.
+- **Stable tunnels are fine.** A *named* Cloudflare Tunnel on **your own domain**
+  (`workbench.yourdomain`) gives a permanent HTTPS URL and bypasses CGNAT / blocked ports via
+  outbound connection — it is the recommended zero-cost path for "data stays local". Full
+  steps: `references/deploy.md` (路线 B). The deciding test is only one: **is the public URL
+  stable + HTTPS?** Stable → usable; rotating → drop.
 
-### Tunnel options (off-network / public access)
+### Docker sandbox + stable public URL
+- Build a single image: `server.py` + `static/` + vendored `echarts.min.js` + `config.json`.
+- Persist data via a **mounted volume** (`-v <host>:/app/data` or a named volume) — SQLite
+  lives there, never in the image layer. Recreating the container keeps the data.
+- Deploy so the platform maps the container port to a **stable public URL** that does not
+  change when the sandbox idles. Tell the user the bookmarked link is permanent.
 
-Tunnels keep the backend local (so the local scan survives). Reliability varies by
-network. On a *restricted* network (GitHub throttled, broker WebSockets hang), expect:
+### PWA (manifest.json + service worker)
+- `manifest.json` (same origin): `name` / `short_name`, `icons` (192/512 + maskable),
+  `theme_color` / `background_color`, `display: "standalone"` (fullscreen, no address bar),
+  `start_url`, `scope`. Custom icon + splash derive from `icons` / `background_color`.
+- `sw.js`: precache the app shell (`index.html`, `echarts.min.js`, `manifest.json`) so the
+  app opens offline; runtime cache for `/api/*` with stale-while-revalidate.
+- Register the SW from `index.html`; link the manifest with `<link rel="manifest">`.
 
-| Tool | Command | Pros | Failure mode |
-|---|---|---|---|
-| **cloudflared** | `cloudflared tunnel --url http://localhost:PORT` | Stable, no password, HTTP→HTTPS | Binary download from GitHub blocked → can't install |
-| **localtunnel** | `npx localtunnel --port PORT --password x` | Pure Node, no binary | Broker WebSocket handshake hangs forever on throttled net |
-| **pinggy** | `ssh -4 -p 443 -R 0:localhost:PORT a.pinggy.io` | No binary; SSH egress often open | Free relay resets frequently; needs `-4` (IPv6 times out); real URL only printed under a pty |
+**Bundled reference files** (in `assets/`): `static/sw.js` (precache shell + SWR for
+`/api/*`), `static/icon.svg` (neutral maskable icon — swap for your branded PNG for best iOS
+support), and a dynamic `/manifest.json` route in `server.py` that fills `name` /
+`short_name` / `theme_color` / `background_color` from `config.json` (no hardcoded brand).
+`index.html` already links the manifest and registers the SW on load.
 
-If every tunnel fails, the only public option is a tiny VPS running `server.py` — but
-then the local scan panels are empty (no tooling on the cloud box). Live
-news/weather/stock still work. State this trade-off explicitly; never silently drop the
-local panels.
+### Phone "Add to Home Screen" tutorial (delivery)
+- **iOS (Safari):** open the public URL → Share (□↑) → *Add to Home Screen* → name it → Add.
+  Launches standalone.
+- **Android (Chrome):** open the URL → ⋮ menu → *Install app* / *Add to Home screen* → confirm.
+- Confirm the installed icon opens with no browser chrome (standalone). Offline reload should
+  still show the shell.

@@ -17,7 +17,10 @@ for _k in ("HTTP_PROXY", "HTTPS_PROXY", "http_proxy", "https_proxy", "ALL_PROXY"
 
 DEFAULT_CONFIG = {
     "brand": "AI 工作台",
+    "short_name": "工作台",
     "tagline": "Local AI Workstation",
+    "theme_color": "#0D1117",
+    "background_color": "#0D1117",
     "city": "北京",
     "stocks": {
         "markets": {"A股": ["sh000001", "sz399001", "sz399006"],
@@ -36,6 +39,39 @@ def load_config():
     merged = dict(DEFAULT_CONFIG)
     merged.update(user)
     return merged
+
+def manifest_for(cfg):
+    """PWA manifest，全部取自 config（代码零硬编码品牌/颜色/图标）。
+
+    图标策略：若 static/ 下存在 PNG（icon-192.png / icon-512.png /
+    icon-maskable-512.png）则优先使用，满足 iOS/Android 安装要求；
+    SVG 始终保留作兜底（矢量任意尺寸）。放 PNG 即刻生效，无需改代码。
+    """
+    brand = cfg.get("brand") or "AI 工作台"
+    icons = []
+    _static = os.path.join(BASE, "static")
+    _png_specs = [
+        ("icon-192.png", "192x192", "image/png", "any"),
+        ("icon-512.png", "512x512", "image/png", "any"),
+        ("icon-maskable-512.png", "512x512", "image/png", "maskable"),
+    ]
+    for fn, sizes, ctype, purpose in _png_specs:
+        if os.path.exists(os.path.join(_static, fn)):
+            icons.append({"src": "/" + fn, "sizes": sizes, "type": ctype, "purpose": purpose})
+    # SVG 兜底（始终有至少一个图标，矢量任意尺寸）
+    icons.append({"src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"})
+    return {
+        "name": brand,
+        "short_name": cfg.get("short_name") or brand[:4],
+        "description": cfg.get("tagline") or "个人本地 AI 工作台",
+        "lang": "zh-CN",
+        "start_url": "/",
+        "scope": "/",
+        "display": "standalone",
+        "background_color": cfg.get("background_color") or "#0D1117",
+        "theme_color": cfg.get("theme_color") or "#0D1117",
+        "icons": icons,
+    }
 
 def get_db():
     os.makedirs(os.path.dirname(DB), exist_ok=True)
@@ -1097,6 +1133,13 @@ class Handler(BaseHTTPRequestHandler):
         qs = urllib.parse.parse_qs(_up.query)
         if p in ("/", "/index.html"):
             self.static("static/index.html", "text/html; charset=utf-8")
+        elif p == "/manifest.json":
+            self._send(200, json.dumps(manifest_for(load_config()), ensure_ascii=False).encode("utf-8"),
+                       "application/manifest+json; charset=utf-8")
+        elif p == "/sw.js":
+            self.static("static/sw.js", "application/javascript; charset=utf-8")
+        elif p == "/icon.svg":
+            self.static("static/icon.svg", "image/svg+xml")
         elif p == "/favicon.ico":
             self._send(204, b"")
         elif p == "/api/daily/news": self.json(safe(api_news))
@@ -1196,7 +1239,7 @@ def main():
     port = int(os.environ.get("PORT", "8788"))
     threading.Thread(target=_warmup, daemon=True).start()
     srv = ThreadingHTTPServer(("0.0.0.0", port), Handler)
-    print("本地 AI 工作台 → http://0.0.0.0:%d (局域网可访问)" % port)
+    print("本地 AI 工作台 → 容器端口 %d（对外访问用部署平台分配的稳定公网 URL，数据持久化于挂载卷）" % port)
     try:
         srv.serve_forever()
     except KeyboardInterrupt:

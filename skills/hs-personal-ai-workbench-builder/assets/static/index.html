@@ -14,6 +14,9 @@
 <!-- ECharts：本地优先，缺失时自动回退 CDN（离线/在线双用） -->
 <script src="static/echarts.min.js" onerror="(function(){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js';document.head.appendChild(s);})()"></script>
 <link rel="icon" href="data:,">
+<!-- PWA：manifest 由 /manifest.json 动态生成（取自 config.json），sw.js 提供离线壳 -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0D1117">
 
 <style>
 :root{
@@ -1273,6 +1276,14 @@ buildTree();
 selectSection('daily');
 setInterval(refreshData, 300000);
 window.addEventListener('resize', ()=>{ (window.__charts||[]).forEach(c=>{ try{ c.resize(); }catch(e){} }); });
+</script>
+<!-- PWA：注册 service worker，使应用可离线打开、可「添加到主屏幕」 -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
 </script>
 </body>
 </html>

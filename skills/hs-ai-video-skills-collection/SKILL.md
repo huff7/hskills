@@ -1,5 +1,5 @@
 ---
-name: hskill-ai-video-skills-collection
+name: hs-ai-video-skills-collection
 description: 一站式安装并管理「用 AI 做视频」所需的 8 个开源 Skill（智能粗剪 / 口播精修 / 批量处理 / 自动字幕 / 转码助手 / 品牌包装 / 动态片头 / 一键切片）。当用户说"帮我装好做视频的 AI 技能""搭建视频剪辑 Agent 工具链""我要做短视频需要哪些 Skill""把那 8 个剪辑 Skill 装上"时使用。触发后逐个安装并汇报每个的安装状态。
 agent_created: true
 ---
@@ -11,7 +11,7 @@ agent_created: true
 ## 适用前提
 
 - 用户已装有某个 Agent 工具（**WorkBuddy / Claude Code / Codex** 均可），你本人也是其中一个。
-- 本地建议已装 `ffmpeg` + `ffprobe`（`hskill-ffmpeg-usage` 技能里有安装指引；多个 Skill 运行时也依赖它）。
+- 本地建议已装 `ffmpeg` + `ffprobe`（`hs-ffmpeg-usage` 技能里有安装指引；多个 Skill 运行时也依赖它）。
 - 少数 Skill 需要 API Key（如 Deepgram / ElevenLabs）。安装时若提示缺 Key，告诉用户去对应上游仓库 README 申请，**不要卡住其余安装**——把缺 Key 的标成"需手动"继续往下装。
 
 ## 你的安装清单（逐个执行，装完立即汇报 成功 / 失败 / 需手动）
@@ -22,7 +22,7 @@ agent_created: true
 4. `npx skills add kwindla/skill-caption-clip` — ④ 自动字幕
 5. 安装 `ffmpeg-usage`（**本仓库原创，只能从 hskills 获取**）：
    ```bash
-   git clone https://github.com/huff7/hskills /tmp/hskills && cp -R /tmp/hskills/skills/hskill-ffmpeg-usage <你的skills目录>
+   git clone https://github.com/huff7/hskills /tmp/hskills && cp -R /tmp/hskills/skills/hs-ffmpeg-usage <你的skills目录>
    ```
    - WorkBuddy 的 skills 目录：`~/.workbuddy/skills/`
    - Claude Code 的 skills 目录：`~/.claude/skills/`

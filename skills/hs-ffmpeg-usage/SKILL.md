@@ -1,5 +1,5 @@
 ---
-name: hskill-ffmpeg-usage
+name: hs-ffmpeg-usage
 description: "ffmpeg / ffprobe 音视频处理命令速查与实战配方。覆盖：信息查询、截图与抽帧、GIF、音视频分离/提取/替换、转码封装、缩放裁剪旋转、拼接、加字幕/水印/边框、变速混音、录屏录制。当用户需要对视频或音频做命令行处理（截图、抽帧做封面、提取音频、格式转换、剪裁、合并、加字幕、生成 GIF、转码）时使用；适用于 Claude Code / Codex / WorkBuddy 等任意对话式 Agent。技能本身不含二进制，仅提供命令配方与选型指引。"
 agent_created: true
 license: Apache-2.0

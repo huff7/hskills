@@ -4,7 +4,7 @@
 2. npx skills add Vibetool/talking-head-video
 3. npx skills add amywork777/video-editing-pipeline
 4. npx skills add kwindla/skill-caption-clip
-5. 请从 github.com/huff7/hskills 仓库的 skills/hskill-ffmpeg-usage/ 目录安装 ffmpeg-usage（git clone 仓库后复制该目录到你的 skills/ 目录）
+5. 请从 github.com/huff7/hskills 仓库的 skills/hs-ffmpeg-usage/ 目录安装 ffmpeg-usage（git clone 仓库后复制该目录到你的 skills/ 目录）
 6. npx skills add op7418/Video-Wrapper-Skills
 7. npx skills add heygen-com/hyperframes --full-depth
    npx skills add remotion-dev/skills

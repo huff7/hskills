@@ -1,6 +1,6 @@
 ---
-name: hskill-personal-ai-workbench-builder
-description: "个人AI工作台搭建流程（Personal AI Workbench Builder）：Requirement-driven methodology for building a personal local dashboard/workbench/cockpit. Starts from the user's pain points, derives the module breakdown from those pains (never a fixed module list), lets the user choose the tech stack from presented options, then derives endpoints and tables from the confirmed modules. Ships a reference implementation (zero-dependency Python stdlib server + vanilla-JS SPA, SQLite, ECharts, LAN/phone access, dark theme, local tool scanning, and a unified running-AI-tasks panel) as ONE worked example to adapt, not as the required product. Use when a user wants a self-hosted personal dashboard, wants scattered daily info on one local page, wants to see their own local AI tooling, or wants to know what their AI agent is running. NOT for hosted SaaS or multi-user apps. Branding and paths are config-driven — the skill ships NO author-specific labels."
+name: hs-personal-ai-workbench-builder
+description: "个人AI工作台搭建流程（Personal AI Workbench Builder）：Requirement-driven methodology for building a personal local dashboard/workbench/cockpit. Starts from the user's pain points, derives the module breakdown from those pains (never a fixed module list), lets the user choose the tech stack from presented options, then derives endpoints and tables from the confirmed modules. Ships a reference implementation (zero-dependency Python stdlib server + vanilla-JS SPA, SQLite, ECharts, stable public URL + PWA (offline, installable, fullscreen), dark theme, local tool scanning, and a unified running-AI-tasks panel) as ONE worked example to adapt, not as the required product. Use when a user wants a self-hosted personal dashboard, wants scattered daily info on one local page, wants to see their own local AI tooling, or wants to know what their AI agent is running. NOT for hosted SaaS or multi-user apps. Branding and paths are config-driven — the skill ships NO author-specific labels."
 agent_created: true
 ---
 
@@ -238,8 +238,9 @@ modules' endpoints overlap heavily, raise the merge *now*, not after implementat
    file without losing their identity.
 2. Landing page = the module they actually open daily. No welcome screen; first paint must
    already be useful. Ask if unclear.
-3. Bind `0.0.0.0`, print both localhost and LAN URLs, collapse the sidebar to a drawer
-   under 880px.
+3. Inside the container bind `0.0.0.0` (the platform maps the port); collapse the sidebar to
+   a drawer under 880px. The address the user opens is the **stable public URL** from Step 6,
+   not a LAN IP.
 4. **Dropping a module means deleting five things**: nav node, view fn, loader fn, backend
    route, and its tables. Never leave a dead entry that does nothing when clicked.
 5. **Generate a 《工作台配置.md》 (or config section in README)** recording: module list with
@@ -251,13 +252,46 @@ modules' endpoints overlap heavily, raise the merge *now*, not after implementat
    incremental (C-version) flow reads it before touching anything, so you don't repeat work or
    regress a pitfall already fixed.
 
+## Step 6 — Deploy: Docker sandbox + stable public URL + PWA
+
+Replace the old "bind 0.0.0.0 + LAN IP + same-Wi-Fi phone" story. The dashboard must be
+reachable from the phone **without tethering to the same Wi-Fi**, and the link must survive
+sandbox sleep.
+
+1. **Docker sandbox isolation.** Package the whole workbench (server + frontend + data
+   volume) into a Docker image as an isolated runtime. Persist SQLite / app data through a
+   mounted volume (named volume or bind mount) on the host — the container can be recreated,
+   data must not be lost. The image is the sandbox; never write user data into the image
+   layer.
+2. **Stable public URL (must outlive sandbox sleep).** Deploy to a stable hosted endpoint so
+   the public URL stays valid across container recreation / sandbox sleep / restart. The URL
+   is independent of any local IP. Tell the user explicitly: the link they bookmark never
+   changes when the sandbox idles.
+3. **PWA (manifest.json + service worker).** Ship a web app manifest (`name` / `short_name`,
+   `icons` at multiple sizes, `theme_color` / `background_color`, `display: "standalone"` →
+   fullscreen, no address bar, `start_url`, `scope`) and a service worker that precaches the
+   app shell so it opens offline. Both served from the same origin as the app. Custom icon +
+   splash come from the manifest `icons` / `background_color`.
+4. **Data stays local.** SQLite / the data volume remains on the host's local mount — **never
+   migrate to cloud or server-side storage**. PWA offline mode only reads/writes the local
+   data; no cloud sync is introduced. This is a hard constraint, not a default.
+5. **Delivery.** Hand over: (a) the stable public URL; (b) the phone "Add to Home Screen"
+   tutorial — iOS Safari: Share → Add to Home Screen; Android Chrome: ⋮ → Install app /
+   Add to Home screen. Confirm the installed icon launches standalone (no browser chrome).
+   Concrete platform steps, free-subdomain application, Cloudflare Tunnel routing, and the
+   DDNS+Caddy alternative: `references/deploy.md`.
+
 ## Reference implementation (`assets/` — one example, adapt freely)
 
 Zero-dependency row of the stack table. `server.py` (ThreadingHTTPServer, `safe()` wrapper,
 `cached(key, fn)` + warm-up daemon, SQLite, local scanners) · `index.html` (no framework:
 `TREE` nav / `VIEWS{}` HTML / `LOAD{}` async loaders / `renderView()`; `getJSON` + `safeSet`
 are the only helpers) · vendored `echarts.min.js` with CDN fallback ·
-`config.example.json`.
+`config.example.json`. **PWA + Docker extras:** `Dockerfile` (slim Python image, data via
+mounted volume) · `static/sw.js` (precache shell + SWR for `/api/*`) · `static/icon.svg`
+(neutral maskable icon) · dynamic `/manifest.json` route built from `config.json`
+(`brand` / `short_name` / `theme_color` / `background_color` — zero hardcoded branding).
+`index.html` links the manifest and registers the SW on load.
 
 Its modules came from one user's pains and are **candidates, not requirements**:
 
@@ -286,6 +320,7 @@ drop any sub-module the user's pains don't justify.
 | **每日股市** | 多市场行情看不到一处 | 新浪财经（GBK）多市场 | 抓取型 + 录入型 | `GET /api/daily/stock`(markets) · `GET/POST /api/daily/stock/reviews` · `GET/POST /api/daily/stock/strategy` · `GET/POST/DELETE /api/daily/watchlist` | `stock_reviews` · `stock_strategy` · `watchlist` |
 
 Sub-module notes (gotchas live in `references/sources.md`):
+Deployment paths & PWA hosting: `references/deploy.md`.
 - **打卡** uses a two-table design: `checkin_items` (what to track) + `checkin_logs`
   (one row per check-in per day). `stats` computes current **streak** (consecutive days
   ending today/yesterday) + total + `checked_today`. Seed defaults (早起作息 / 运动健身)
@@ -364,7 +399,10 @@ placeholder) · no card overflow · no huge grid gaps · update times present ·
 confirmed module has a working entry with real content**. Screenshot after ≥2s — charts
 render async and an early shot catches a "生成中" intermediate state, which is not a bug.
 **Mobile**: re-run at `{width:390,height:844,isMobile:true}`, click `.hamburger`, confirm
-the drawer opens and closes on leaf selection.
+the drawer opens and closes on leaf selection. **PWA**: confirm `manifest.json` is valid and
+linked, the service worker registers (DevTools → Application → Service Workers "activated"),
+and the install prompt is offered (or manually Add to Home Screen) — the launched instance is
+`display:standalone` (no address bar).
 
 **归档**：每次验证截图统一存进项目 `_test_snap/` 目录（如 `_test_snap/verify_landing_20260803.png`、`_test_snap/verify_mobile_20260803.png`），不要只丢在根目录的 `_verify.png` 然后删掉。这批截图是交付物的一部分——下次增量改动后重跑，能直接对比"改之前 vs 改之后"的渲染，省去重新描述 bug 的功夫。
 
@@ -372,7 +410,9 @@ the drawer opens and closes on leaf selection.
 
 - **Server dies between turns** → relaunch in a background shell; do *not* append `&`.
 - **Proxies break local fetches** → strip `HTTP_PROXY/HTTPS_PROXY/...` at server start.
-- **OS firewall** silently blocks the first LAN hit → the user must allow the binary.
+- **Access path changed** → phone access now goes through the stable public URL (Step 6),
+  not same-Wi-Fi LAN, so the OS-firewall-LAN gotcha no longer applies. Keep `HTTP_PROXY`
+  stripping (proxies still break server-side fetches).
 - **Personal data leaking into the template** → before packaging, grep assets for the
   author's home path, brand, and persona strings. See Self-Evolution #6.
 
